@@ -25,5 +25,5 @@ Route::prefix('unreal-union/v1')->group(function () {
 
     // EVENTS
     Route::post('/events', [EventController::class, 'createEvent']);
-
+    Route::get('/events/{searchString?}', [EventController::class, 'getEvents']);
 });
