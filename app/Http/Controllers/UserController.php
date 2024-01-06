@@ -56,10 +56,10 @@ class UserController extends Controller
             if (Hash::check($validated['password'], $dbUser->password)) {
                 return response()->json();
             } else {
-                return response()->json(['error' => 'Invalid credentials']);
+                return response()->json(['error' => 'Invalid credentials'], 404);
             }
         } else {
-            return response()->json(['error' => 'Invalid credentials']);
+            return response()->json(['error' => 'Invalid credentials'], 404);
         }
     }
 }
