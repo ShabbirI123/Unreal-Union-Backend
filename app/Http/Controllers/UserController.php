@@ -67,7 +67,7 @@ class UserController extends Controller
 
     public function getRegisteredEvents(int $userId): JsonResponse
     {
-        //TODO: get user through token or something similar
+        //TODO: get user through token
         $dbUser = User::find($userId);
 
         if ($dbUser) {
@@ -93,4 +93,24 @@ class UserController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
     }
+
+    public function registerForEvent(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'userId' => ['required', 'numeric'],
+            'eventId' => ['required', 'numeric']
+        ]);
+
+        $dbUser = User::find($validated['userId']);
+
+        if ($dbUser) {
+            $dbUser->events()->attach($validated['eventId']);
+
+            return response()->json(status: 201);
+        } else {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+    }
+
 }
