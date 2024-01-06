@@ -51,7 +51,7 @@ class EventController extends Controller
      * Get all events of which the name matches with the searchString.
      * If no searchString is provided, all events will be returned
      */
-    public function getEvents(?string $searchString = null): JsonResponse
+    public function getEventList(?string $searchString = null): JsonResponse
     {
         $dbEvent = $searchString != null ? Event::where('name', 'like', "%{$searchString}%")->get() : Event::all();
 
@@ -69,5 +69,24 @@ class EventController extends Controller
         } else {
             return response()->json(['error' => 'No event was found'], 404);
         }
+    }
+
+    public function getEvent(int $eventId): JsonResponse
+    {
+        $dbEvent = Event::where('event_id', $eventId)->first();
+
+        if ($dbEvent) {
+            $data = [
+                'name' => $dbEvent->name,
+                'description' => $dbEvent->description,
+                'location' => $dbEvent->location,
+                'date' => $dbEvent->date
+            ];
+
+            return response()->json(['data' => $data]);
+        } else {
+            return response()->json(['error' => 'No event was found'], 404);
+        }
+
     }
 }
