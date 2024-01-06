@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -60,6 +62,35 @@ class UserController extends Controller
             }
         } else {
             return response()->json(['error' => 'Invalid credentials'], 404);
+        }
+    }
+
+    public function getRegisteredEvents(int $userId): JsonResponse
+    {
+        //TODO: get user through token or something similar
+        $dbUser = User::find($userId);
+
+        if ($dbUser) {
+            $registeredEventList = DB::table('event_user')->where('user_id', $userId)->pluck('event_id');
+
+            if ($registeredEventList->isNotEmpty()) {
+                $eventList = Event::whereIn('event_id', $registeredEventList)->get();
+
+                $data = $eventList->map(function (Event $event) {
+                    return [
+                        'name' => $event->name,
+                        'description' => $event->description,
+                        'location' => $event->location,
+                        'date' => $event->date
+                    ];
+                });
+
+                return response()->json(['data' => $data]);
+            } else {
+                return response()->json(['error' => 'No events found for this user'], 404);
+            }
+        } else {
+            return response()->json(['error' => 'User not found'], 404);
         }
     }
 }
