@@ -87,6 +87,5 @@ class EventController extends Controller
         } else {
             return response()->json(['error' => 'No event was found'], 404);
         }
-
     }
 }
