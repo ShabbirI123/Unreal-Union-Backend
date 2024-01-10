@@ -20,7 +20,8 @@ class EventController extends Controller
             'name' => ['required', 'string', 'unique:event,name'],
             'description' => ['required', 'string'],
             'location' => ['required', 'string'],
-            'date' => ['required', 'date']
+            'date' => ['required', 'date'],
+            'imagePath' => ['required', 'string']
         ], $messages = [
             'name.unique' => 'An event with this name already exists! Please choose a different name.'
         ]);
@@ -38,6 +39,7 @@ class EventController extends Controller
             $event->description = $validated['description'];
             $event->location = $validated['location'];
             $event->date = Carbon::parse($validated['date']);
+            $event->image_path = $validated['imagePath'];
 
             $event->save();
 
@@ -51,7 +53,7 @@ class EventController extends Controller
      * Get all events of which the name matches with the searchString.
      * If no searchString is provided, all events will be returned
      */
-    public function getEvents(?string $searchString = null): JsonResponse
+    public function getEventList(?string $searchString = null): JsonResponse
     {
         $dbEvent = $searchString != null ? Event::where('name', 'like', "%{$searchString}%")->get() : Event::all();
 
@@ -61,9 +63,29 @@ class EventController extends Controller
                     'name' => $event->name,
                     'description' => $event->description,
                     'location' => $event->location,
-                    'date' => $event->date
+                    'date' => $event->date,
+                    'imagePath' => $event->image_path
                 ];
             });
+
+            return response()->json(['data' => $data]);
+        } else {
+            return response()->json(['error' => 'No event was found'], 404);
+        }
+    }
+
+    public function getEvent(int $eventId): JsonResponse
+    {
+        $dbEvent = Event::where('event_id', $eventId)->first();
+
+        if ($dbEvent) {
+            $data = [
+                'name' => $dbEvent->name,
+                'description' => $dbEvent->description,
+                'location' => $dbEvent->location,
+                'date' => $dbEvent->date,
+                'imagePath' => $dbEvent->image_path
+            ];
 
             return response()->json(['data' => $data]);
         } else {

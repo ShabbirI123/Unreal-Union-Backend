@@ -22,8 +22,11 @@ Route::prefix('unreal-union/v1')->group(function () {
     Route::post('/users/login', [UserController::class, 'login']);
 
     //TODO: add middleware for methods that should only be possible when authenticated
+    Route::post('/users/events', [UserController::class, 'registerForEvent']);
+    Route::get('/users/events/{userId}', [UserController::class, 'getRegisteredEvents']);
 
     // EVENTS
     Route::post('/events', [EventController::class, 'createEvent']);
-    Route::get('/events/{searchString?}', [EventController::class, 'getEvents']);
+    Route::get('/events/search/{searchString?}', [EventController::class, 'getEventList']);
+    Route::get('/events/{eventId}', [EventController::class, 'getEvent']);
 });
