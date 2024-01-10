@@ -20,6 +20,7 @@ class Event extends Model
         'description',
         'location',
         'date',
+        'image_path'
     ];
 
     public function users() : BelongsToMany
