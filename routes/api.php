@@ -22,6 +22,10 @@ Route::prefix('unreal-union/v1')->group(function () {
     Route::post('/users/login', [UserController::class, 'login']);
 
     Route::middleware('auth:sanctum')->group(function () {
+
+        //USERS
+        Route::delete('/users/logout/{userId}', [UserController::class, 'invalidToken']);
+
         // EVENTS
         Route::post('/events', [EventController::class, 'createEvent']);
         Route::get('/events/{searchString?}', [EventController::class, 'getEvents']);

@@ -6,7 +6,6 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -55,9 +54,16 @@ class UserController extends Controller
 
         if ($dbUser) {
             if (Hash::check($validated['password'], $dbUser->password)) {
+
+                try {
+                    $dbUser->tokens()->delete();
+                } catch (Exception $exception) {
+                    return response()->json(['error' => $exception->getMessage()], 500);
+                }
+
                 $token = $dbUser->createToken('authToken')->plainTextToken;
 
-                return response()->json(['id' => $dbUser,'apiToken' => $token]);
+                return response()->json(['id' => $dbUser->user_id, 'apiToken' => $token]);
             } else {
                 return response()->json(['error' => 'Invalid credentials'], 404);
             }
@@ -65,4 +71,17 @@ class UserController extends Controller
             return response()->json(['error' => 'Invalid credentials'], 404);
         }
     }
+
+    public function invalidToken(int $userId): JsonResponse
+    {
+        try {
+            $dbUser = User::where('user_id', $userId)->first();
+            $dbUser->tokens()->delete();
+        } catch (Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 500);
+        }
+
+        return response()->json(status: 204);
+    }
+
 }
