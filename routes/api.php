@@ -26,11 +26,12 @@ Route::prefix('unreal-union/v1')->group(function () {
         //USERS
         Route::delete('/users/logout/{userId}', [UserController::class, 'invalidToken']);
 
-    Route::post('/users/events', [UserController::class, 'registerForEvent']);
-    Route::get('/users/events/{userId}', [UserController::class, 'getRegisteredEvents']);
+        Route::post('/users/events', [UserController::class, 'registerForEvent']);
+        Route::get('/users/events/{userId}', [UserController::class, 'getRegisteredEvents']);
 
-    // EVENTS
-    Route::post('/events', [EventController::class, 'createEvent']);
-    Route::get('/events/search/{searchString?}', [EventController::class, 'getEventList']);
-    Route::get('/events/{eventId}', [EventController::class, 'getEvent']);
+        // EVENTS
+        Route::post('/events', [EventController::class, 'createEvent']);
+        Route::get('/events/search/{searchString?}', [EventController::class, 'getEventList']);
+        Route::get('/events/{eventId}', [EventController::class, 'getEvent']);
+    });
 });

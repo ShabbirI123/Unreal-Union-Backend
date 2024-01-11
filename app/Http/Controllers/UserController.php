@@ -76,11 +76,12 @@ class UserController extends Controller
 
     public function getRegisteredEvents(int $userId): JsonResponse
     {
-        //TODO: get user through token
         $dbUser = User::find($userId);
 
         if ($dbUser) {
-            $registeredEventList = DB::table('event_user')->where('user_id', $userId)->pluck('event_id');
+            $registeredEventList = DB::table('event_user')
+                ->where('user_id', $userId)
+                ->pluck('event_id');
 
             if ($registeredEventList->isNotEmpty()) {
                 $eventList = Event::whereIn('event_id', $registeredEventList)->get();
