@@ -113,4 +113,21 @@ class UserController extends Controller
 
     }
 
+    public function unregisterFromEvent(int $userId, int $eventId) : JsonResponse
+    {
+        $dbUser = User::find($userId);
+        if ($dbUser) {
+            try {
+                $dbUser->events()->detach($eventId);
+
+                return response()->json(status: 204);
+            } catch (Exception $exception) {
+                error_log($exception);
+                return response()->json(['error' => $exception], 400);
+            }
+        } else {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    }
+
 }
