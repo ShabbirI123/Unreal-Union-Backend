@@ -104,16 +104,19 @@ class UserController extends Controller
         $dbUser = User::find($validated['userId']);
 
         if ($dbUser) {
+            if ($dbUser->events()->wherePivot('event_id', $validated['eventId'])->exists()) {
+                return response()->json(['error' => 'User already registered for this event'], 400);
+            }
             $dbUser->events()->attach($validated['eventId']);
-
             return response()->json(status: 201);
+
         } else {
             return response()->json(['error' => 'User not found'], 404);
         }
 
     }
 
-    public function unregisterFromEvent(int $userId, int $eventId) : JsonResponse
+    public function unregisterFromEvent(int $userId, int $eventId): JsonResponse
     {
         $dbUser = User::find($userId);
         if ($dbUser) {
