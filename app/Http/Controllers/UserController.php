@@ -47,10 +47,16 @@ class UserController extends Controller
 
     public function login(Request $request): JsonResponse
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'username' => ['required', 'string'],
             'password' => ['required', 'string']
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([$validator->errors()], 400);
+        }
+
+        $validated = $validator->safe()->all();
 
         $dbUser = User::where('username', $validated['username'])->first();
 
@@ -96,21 +102,52 @@ class UserController extends Controller
 
     public function registerForEvent(Request $request): JsonResponse
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'userId' => ['required', 'numeric'],
             'eventId' => ['required', 'numeric']
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([$validator->errors()], 400);
+        }
+
+        $validated = $validator->safe()->all();
+
         $dbUser = User::find($validated['userId']);
+        $dbEvent = Event::find($validated['eventId']);
 
         if ($dbUser) {
-            $dbUser->events()->attach($validated['eventId']);
+            if ($dbUser->events()->wherePivot('event_id', $validated['eventId'])->exists()) {
+                return response()->json(['error' => 'User already registered for this event'], 400);
+            }
+            if ($dbEvent) {
+                $dbUser->events()->attach($validated['eventId']);
+                return response()->json(status: 201);
+            } else {
+                return response()->json(['error' => 'Event not found'], 404);
+            }
 
-            return response()->json(status: 201);
         } else {
             return response()->json(['error' => 'User not found'], 404);
         }
 
+    }
+
+    public function unregisterFromEvent(int $userId, int $eventId): JsonResponse
+    {
+        $dbUser = User::find($userId);
+        if ($dbUser) {
+            try {
+                $dbUser->events()->detach($eventId);
+
+                return response()->json(status: 204);
+            } catch (Exception $exception) {
+                error_log($exception);
+                return response()->json(['error' => $exception], 400);
+            }
+        } else {
+            return response()->json(['error' => 'User not found'], 404);
+        }
     }
 
 }
