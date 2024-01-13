@@ -7,7 +7,9 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Nette\Utils\Image;
 
 class EventController extends Controller
 {
@@ -21,7 +23,7 @@ class EventController extends Controller
             'description' => ['required', 'string'],
             'location' => ['required', 'string'],
             'date' => ['required', 'date'],
-            'imagePath' => ['required', 'string']
+            'image' => ['required', 'image'],
         ], $messages = [
             'name.unique' => 'An event with this name already exists! Please choose a different name.'
         ]);
@@ -31,6 +33,8 @@ class EventController extends Controller
         }
 
         $validated = $validator->safe()->all();
+        
+        $imagePath = $request->file('image')->store('public/images');
 
         try {
             $event = new Event;
@@ -39,7 +43,7 @@ class EventController extends Controller
             $event->description = $validated['description'];
             $event->location = $validated['location'];
             $event->date = Carbon::parse($validated['date']);
-            $event->image_path = $validated['imagePath'];
+            $event->image_path = $imagePath;
 
             $event->save();
 
