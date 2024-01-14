@@ -132,6 +132,10 @@ class UserController extends Controller
             }
             if ($dbEvent) {
                 $dbUser->events()->attach($validated['eventId']);
+                $participationCount = $dbEvent->participation_limit;
+
+                $dbEvent::where('event_id', $validated['eventId'])->update(['participation_limit' => $participationCount-1]);
+
                 return response()->json(status: 201);
             } else {
                 return response()->json(['error' => 'Event not found'], 404);
