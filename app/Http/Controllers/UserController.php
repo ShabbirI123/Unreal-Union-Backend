@@ -62,7 +62,16 @@ class UserController extends Controller
 
         if ($dbUser) {
             if (Hash::check($validated['password'], $dbUser->password)) {
-                return response()->json();
+
+                try {
+                    $dbUser->tokens()->delete();
+                } catch (Exception $exception) {
+                    return response()->json(['error' => $exception->getMessage()], 500);
+                }
+
+                $token = $dbUser->createToken('authToken')->plainTextToken;
+
+                return response()->json(['id' => $dbUser->user_id, 'apiToken' => $token]);
             } else {
                 return response()->json(['error' => 'Invalid credentials'], 404);
             }
@@ -73,11 +82,12 @@ class UserController extends Controller
 
     public function getRegisteredEvents(int $userId): JsonResponse
     {
-        //TODO: get user through token
         $dbUser = User::find($userId);
 
         if ($dbUser) {
-            $registeredEventList = DB::table('event_user')->where('user_id', $userId)->pluck('event_id');
+            $registeredEventList = DB::table('event_user')
+                ->where('user_id', $userId)
+                ->pluck('event_id');
 
             if ($registeredEventList->isNotEmpty()) {
                 $eventList = Event::whereIn('event_id', $registeredEventList)->get();
@@ -148,6 +158,19 @@ class UserController extends Controller
         } else {
             return response()->json(['error' => 'User not found'], 404);
         }
+    }
+
+
+    public function invalidToken(int $userId): JsonResponse
+    {
+        try {
+            $dbUser = User::where('user_id', $userId)->first();
+            $dbUser->tokens()->delete();
+        } catch (Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 500);
+        }
+
+        return response()->json(status: 204);
     }
 
 }
