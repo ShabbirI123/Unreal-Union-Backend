@@ -21,6 +21,9 @@ Route::prefix('unreal-union/v1')->group(function () {
     Route::post('/users', [UserController::class, 'register']);
     Route::post('/users/login', [UserController::class, 'login']);
 
+    // EVENTS
+    Route::get('/events/search/{searchString?}', [EventController::class, 'getEventList']);
+
     Route::middleware('auth:sanctum')->group(function () {
 
         //USERS
@@ -32,7 +35,6 @@ Route::prefix('unreal-union/v1')->group(function () {
 
         // EVENTS
         Route::post('/events', [EventController::class, 'createEvent']);
-        Route::get('/events/search/{searchString?}', [EventController::class, 'getEventList']);
         Route::get('/events/{eventId}', [EventController::class, 'getEvent']);
     });
 });

@@ -21,7 +21,8 @@ class EventController extends Controller
             'description' => ['required', 'string'],
             'location' => ['required', 'string'],
             'date' => ['required', 'date'],
-            'imagePath' => ['required', 'string']
+            'imagePath' => ['required', 'string'],
+            'category' => ['required', 'string']
         ], $messages = [
             'name.unique' => 'An event with this name already exists! Please choose a different name.'
         ]);
@@ -40,6 +41,7 @@ class EventController extends Controller
             $event->location = $validated['location'];
             $event->date = Carbon::parse($validated['date']);
             $event->image_path = $validated['imagePath'];
+            $event->category = $validated['category'];
 
             $event->save();
 
@@ -66,6 +68,7 @@ class EventController extends Controller
                     'location' => $event->location,
                     'date' => $event->date,
                     'imagePath' => $event->image_path,
+                    'category' => $event->category,
                 ];
             });
 
@@ -85,7 +88,8 @@ class EventController extends Controller
                 'description' => $dbEvent->description,
                 'location' => $dbEvent->location,
                 'date' => $dbEvent->date,
-                'imagePath' => $dbEvent->image_path
+                'imagePath' => $dbEvent->image_path,
+                'category' => $dbEvent->category
             ];
 
             return response()->json(['data' => $data]);
