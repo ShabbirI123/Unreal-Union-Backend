@@ -22,7 +22,8 @@ class EventFactory extends Factory
             'location' => fake()->streetAddress(),
             'date' => fake()->date(),
             'image_path' => fake()->imageUrl(),
-            'category' => fake()->randomElement($array = array ('festival','culture','fun'))
+            'category' => fake()->randomElement($array = array ('festival','culture','fun')),
+            'participation_limit' => fake()->numberBetween(3,50)
         ];
     }
 }
