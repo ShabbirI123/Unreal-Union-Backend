@@ -156,13 +156,17 @@ class UserController extends Controller
         $dbUser = User::find($userId);
         $dbEvent = Event::find($eventId);
 
-        //TODO: check if user registered for event
         if ($dbUser) {
             try {
-                $dbUser->events()->detach($eventId);
-                $participationLimit = $dbEvent->participation_limit;
+                if (!$dbUser->events()->wherePivot('event_id', $eventId)->exists()) {
+                    return response()->json(['error' => 'User is not registered for this event'], 404);
+                }
 
-                $dbEvent::where('event_id', $eventId)->update(['participation_limit' => $participationLimit+1]);
+                $dbUser->events()->detach($eventId);
+
+                $participationLimit = $dbEvent->participation_limit;
+                $dbEvent::where('event_id', $eventId)->update(['participation_limit' => $participationLimit + 1]);
+
                 return response()->json(status: 204);
             } catch (Exception $exception) {
                 error_log($exception);
