@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Nette\Utils\Image;
 
 class EventController extends Controller
 {
@@ -33,7 +32,7 @@ class EventController extends Controller
         }
 
         $validated = $validator->safe()->all();
-        
+
         $imagePath = $request->file('image')->store('public/images');
 
         try {
@@ -68,7 +67,7 @@ class EventController extends Controller
                     'description' => $event->description,
                     'location' => $event->location,
                     'date' => $event->date,
-                    'imagePath' => $event->image_path
+                    'imagePath' => Storage::url($event->image_path)
                 ];
             });
 
@@ -83,12 +82,14 @@ class EventController extends Controller
         $dbEvent = Event::where('event_id', $eventId)->first();
 
         if ($dbEvent) {
+            $imagePage = env('APP_URL') . ':8000' . Storage::url($dbEvent->image_path);
+
             $data = [
                 'name' => $dbEvent->name,
                 'description' => $dbEvent->description,
                 'location' => $dbEvent->location,
                 'date' => $dbEvent->date,
-                'imagePath' => $dbEvent->image_path
+                'imagePath' => $imagePage
             ];
 
             return response()->json(['data' => $data]);
