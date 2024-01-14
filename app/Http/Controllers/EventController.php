@@ -60,11 +60,12 @@ class EventController extends Controller
         if ($dbEvent->isNotEmpty()) {
             $data = $dbEvent->map(function (Event $event) {
                 return [
+                    'eventId' => $event->event_id,
                     'name' => $event->name,
                     'description' => $event->description,
                     'location' => $event->location,
                     'date' => $event->date,
-                    'imagePath' => $event->image_path
+                    'imagePath' => $event->image_path,
                 ];
             });
 
