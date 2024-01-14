@@ -28,7 +28,7 @@ Route::prefix('unreal-union/v1')->group(function () {
 
         Route::post('/users/events/register', [UserController::class, 'registerForEvent']);
         Route::get('/users/{userId}/events', [UserController::class, 'getRegisteredEvents']);
-    Route::delete('/users/{userId}/events/{eventId}/unregister', [UserController::class, 'unregisterFromEvent']);
+        Route::delete('/users/{userId}/events/{eventId}/unregister', [UserController::class, 'unregisterFromEvent']);
 
         // EVENTS
         Route::post('/events', [EventController::class, 'createEvent']);
