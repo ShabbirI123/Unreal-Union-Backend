@@ -31,6 +31,6 @@ class Event extends Model
 
     public function ratings(): HasMany
     {
-        return $this->hasMany(Rating::class);
+        return $this->hasMany(Rating::class, foreignKey: 'event_id');
     }
 }

@@ -48,6 +48,7 @@ class RatingController extends Controller
 
                 $rating->users()->associate($dbUser);
                 $rating->events()->associate($dbEvent);
+                $dbEvent->ratings()->save($rating);
 
                 $rating->save();
 

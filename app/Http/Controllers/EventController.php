@@ -73,6 +73,7 @@ class EventController extends Controller
                     'date' => $event->date,
                     'imagePath' => Storage::url($event->image_path),
                     'category' => $event->category,
+                    'rating' => $event->ratings->pluck('rating')
                 ];
             });
 
