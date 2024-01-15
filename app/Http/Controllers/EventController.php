@@ -30,7 +30,7 @@ class EventController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([$validator->errors()], 406);
+            return response()->json([$validator->errors()], 400);
         }
 
         $validated = $validator->safe()->all();

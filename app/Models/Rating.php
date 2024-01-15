@@ -20,11 +20,11 @@ class Rating extends Model
 
     public function users(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, foreignKey: 'user_id');
     }
 
     public function events(): BelongsTo
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsTo(Event::class, foreignKey: 'event_id');
     }
 }
