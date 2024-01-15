@@ -73,7 +73,7 @@ class EventController extends Controller
                     'date' => $event->date,
                     'imagePath' => Storage::url($event->image_path),
                     'category' => $event->category,
-                    'rating' => $event->ratings->pluck('rating')
+                    'rating' => round($event->ratings->pluck('rating')->avg(), 1)
                 ];
             });
 
@@ -96,7 +96,8 @@ class EventController extends Controller
                 'location' => $dbEvent->location,
                 'date' => $dbEvent->date,
                 'imagePath' => $imagePage,
-                'category' => $dbEvent->category
+                'category' => $dbEvent->category,
+                'rating' => round($event->ratings->pluck('rating')->avg(), 1)
             ];
 
             return response()->json(['data' => $data]);
