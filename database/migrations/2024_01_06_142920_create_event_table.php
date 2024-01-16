@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('image_path');
             $table->string('category');
             $table->integer('participation_limit');
+            $table->integer('creator_user_id');
             $table->timestamps();
         });
     }

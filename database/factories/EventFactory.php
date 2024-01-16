@@ -23,7 +23,8 @@ class EventFactory extends Factory
             'date' => fake()->date(),
             'image_path' => "images/testImage.jpg",
             'category' => fake()->randomElement($array = array ('festival','culture','fun')),
-            'participation_limit' => fake()->numberBetween(3,50)
+            'participation_limit' => fake()->numberBetween(3,50),
+            'creator_user_id' => 0
         ];
     }
 }

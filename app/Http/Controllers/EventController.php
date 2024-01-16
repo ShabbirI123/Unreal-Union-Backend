@@ -22,10 +22,10 @@ class EventController extends Controller
             'description' => ['required', 'string'],
             'location' => ['required', 'string'],
             'date' => ['required', 'date'],
-            'imagePath' => ['required', 'string'],
             'image' => ['required', 'image'],
             'category' => ['required', 'string'],
-            'participationLimit' => ['required', 'numeric']
+            'participationLimit' => ['required', 'numeric'],
+            'creatorUserId' => ['required', 'numeric'],
         ], $messages = [
             'name.unique' => 'An event with this name already exists! Please choose a different name.'
         ]);
@@ -48,6 +48,7 @@ class EventController extends Controller
             $event->image_path = $imagePath;
             $event->category = $validated['category'];
             $event->participation_limit = $validated['participationLimit'];
+            $event->creator_user_id = $validated['creatorUserId'];
 
             $event->save();
 
@@ -64,26 +65,7 @@ class EventController extends Controller
     public function getEventList(?string $searchString = null): JsonResponse
     {
         $dbEvent = $searchString != null ? Event::where('name', 'like', "%{$searchString}%")->get() : Event::all();
-
-        if ($dbEvent->isNotEmpty()) {
-            $data = $dbEvent->map(function (Event $event) {
-                return [
-                    'eventId' => $event->event_id,
-                    'name' => $event->name,
-                    'description' => $event->description,
-                    'location' => $event->location,
-                    'date' => $event->date,
-                    'imagePath' => url('/') . Storage::url($event->image_path),
-                    'category' => $event->category,
-                    'participationLimit' => $event->participation_limit,
-                    'rating' => round($event->ratings->pluck('rating')->avg(), 1)
-                ];
-            });
-
-            return response()->json(['data' => $data]);
-        } else {
-            return response()->json(['error' => 'No event was found'], 404);
-        }
+        return $this->fetchEventList($dbEvent);
     }
 
     public function getEvent(int $eventId): JsonResponse
@@ -101,6 +83,38 @@ class EventController extends Controller
                 'participationLimit' => $dbEvent->participation_limit,
                 'rating' => round($dbEvent->ratings->pluck('rating')->avg(), 1)
             ];
+            return response()->json(['data' => $data]);
+        } else {
+            return response()->json(['error' => 'No event was found'], 404);
+        }
+    }
+
+    public function getSelfCreatedEvents(int $userId): JsonResponse
+    {
+        $dbEvent = Event::where('creator_user_id', $userId)->get();
+        return $this->fetchEventList($dbEvent);
+    }
+
+    /**
+     * @param $dbEvent
+     * @return JsonResponse
+     */
+    public function fetchEventList($dbEvent): JsonResponse
+    {
+        if ($dbEvent->isNotEmpty()) {
+            $data = $dbEvent->map(function (Event $event) {
+                return [
+                    'eventId' => $event->event_id,
+                    'name' => $event->name,
+                    'description' => $event->description,
+                    'location' => $event->location,
+                    'date' => $event->date,
+                    'imagePath' => url('/') . Storage::url($event->image_path),
+                    'category' => $event->category,
+                    'participationLimit' => $event->participation_limit,
+                    'rating' => round($event->ratings->pluck('rating')->avg(), 1)
+                ];
+            });
 
             return response()->json(['data' => $data]);
         } else {
