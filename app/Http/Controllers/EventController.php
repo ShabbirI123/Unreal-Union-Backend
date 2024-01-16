@@ -24,7 +24,8 @@ class EventController extends Controller
             'date' => ['required', 'date'],
             'imagePath' => ['required', 'string'],
             'image' => ['required', 'image'],
-            'category' => ['required', 'string']
+            'category' => ['required', 'string'],
+            'participationLimit' => ['required', 'numeric']
         ], $messages = [
             'name.unique' => 'An event with this name already exists! Please choose a different name.'
         ]);
@@ -46,6 +47,7 @@ class EventController extends Controller
             $event->date = Carbon::parse($validated['date']);
             $event->image_path = $imagePath;
             $event->category = $validated['category'];
+            $event->participation_limit = $validated['participationLimit'];
 
             $event->save();
 
@@ -73,6 +75,7 @@ class EventController extends Controller
                     'date' => $event->date,
                     'imagePath' => url('/') . Storage::url($event->image_path),
                     'category' => $event->category,
+                    'participationLimit' => $event->participation_limit,
                     'rating' => round($event->ratings->pluck('rating')->avg(), 1)
                 ];
             });
@@ -95,6 +98,7 @@ class EventController extends Controller
                 'date' => $dbEvent->date,
                 'imagePath' => url('/') . Storage::url($dbEvent->image_path),
                 'category' => $dbEvent->category,
+                'participationLimit' => $dbEvent->participation_limit,
                 'rating' => round($event->ratings->pluck('rating')->avg(), 1)
             ];
 

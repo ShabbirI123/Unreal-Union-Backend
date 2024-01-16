@@ -134,7 +134,15 @@ class UserController extends Controller
                 return response()->json(['error' => 'User already registered for this event'], 400);
             }
             if ($dbEvent) {
-                $dbUser->events()->attach($validated['eventId']);
+                $participationLimit = $dbEvent->participation_limit;
+                if ($participationLimit > 0) {
+                    $dbEvent::where('event_id', $validated['eventId'])->update(['participation_limit' => $participationLimit - 1]);
+
+                    $dbUser->events()->attach($validated['eventId']);
+                } else {
+                    return response()->json(['error' => "Event is full"], 403);
+                }
+
                 return response()->json(status: 201);
             } else {
                 return response()->json(['error' => 'Event not found'], 404);
@@ -149,9 +157,18 @@ class UserController extends Controller
     public function unregisterFromEvent(int $userId, int $eventId): JsonResponse
     {
         $dbUser = User::find($userId);
+        $dbEvent = Event::find($eventId);
+
         if ($dbUser) {
             try {
+                if (!$dbUser->events()->wherePivot('event_id', $eventId)->exists()) {
+                    return response()->json(['error' => 'User is not registered for this event'], 404);
+                }
+
                 $dbUser->events()->detach($eventId);
+
+                $participationLimit = $dbEvent->participation_limit;
+                $dbEvent::where('event_id', $eventId)->update(['participation_limit' => $participationLimit + 1]);
 
                 return response()->json(status: 204);
             } catch (Exception $exception) {
