@@ -95,6 +95,7 @@ class UserController extends Controller
 
                 $data = $eventList->map(function (Event $event) {
                     return [
+                        'eventId' => $event->event_id,
                         'name' => $event->name,
                         'description' => $event->description,
                         'location' => $event->location,

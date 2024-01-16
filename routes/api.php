@@ -24,6 +24,7 @@ Route::prefix('unreal-union/v1')->group(function () {
 
     // EVENTS
     Route::get('/events/search/{searchString?}', [EventController::class, 'getEventList']);
+    Route::get('/events/{eventId}', [EventController::class, 'getEvent']);
 
     Route::middleware('auth:sanctum')->group(function () {
 
@@ -36,7 +37,6 @@ Route::prefix('unreal-union/v1')->group(function () {
 
         // EVENTS
         Route::post('/events', [EventController::class, 'createEvent']);
-        Route::get('/events/{eventId}', [EventController::class, 'getEvent']);
 
         // RATINGS
         Route::post('/events/rating', [RatingController::class, 'rateEvent']);
