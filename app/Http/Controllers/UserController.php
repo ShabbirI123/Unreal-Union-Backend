@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -97,7 +98,9 @@ class UserController extends Controller
                         'name' => $event->name,
                         'description' => $event->description,
                         'location' => $event->location,
-                        'date' => $event->date
+                        'date' => $event->date,
+                        'imagePath' => url('/') . Storage::url($event->image_path),
+                        'category' => $event->category
                     ];
                 });
 
