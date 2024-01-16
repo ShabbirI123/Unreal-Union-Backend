@@ -22,7 +22,8 @@ class Event extends Model
         'date',
         'image_path',
         'category',
-        'participation_limit'
+        'participation_limit',
+        'creator_user_id'
     ];
 
     public function users(): BelongsToMany
