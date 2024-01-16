@@ -19,6 +19,7 @@ return new class extends Migration
             $table->dateTime('date');
             $table->string('image_path');
             $table->string('category');
+            $table->integer('participation_limit');
             $table->timestamps();
         });
     }
