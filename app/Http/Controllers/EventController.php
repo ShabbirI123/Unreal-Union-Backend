@@ -71,7 +71,7 @@ class EventController extends Controller
                     'description' => $event->description,
                     'location' => $event->location,
                     'date' => $event->date,
-                    'imagePath' => Storage::url($event->image_path),
+                    'imagePath' => url('/') . Storage::url($event->image_path),
                     'category' => $event->category,
                 ];
             });
@@ -87,14 +87,12 @@ class EventController extends Controller
         $dbEvent = Event::where('event_id', $eventId)->first();
 
         if ($dbEvent) {
-            $imagePage = env('APP_URL') . ':8000' . Storage::url($dbEvent->image_path);
-
             $data = [
                 'name' => $dbEvent->name,
                 'description' => $dbEvent->description,
                 'location' => $dbEvent->location,
                 'date' => $dbEvent->date,
-                'imagePath' => $imagePage,
+                'imagePath' => url('/') . Storage::url($dbEvent->image_path),
                 'category' => $dbEvent->category
             ];
 
