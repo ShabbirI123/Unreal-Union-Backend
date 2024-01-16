@@ -31,7 +31,7 @@ class EventController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([$validator->errors()], 406);
+            return response()->json([$validator->errors()], 400);
         }
 
         $validated = $validator->safe()->all();
@@ -75,7 +75,8 @@ class EventController extends Controller
                     'date' => $event->date,
                     'imagePath' => url('/') . Storage::url($event->image_path),
                     'category' => $event->category,
-                    'participationLimit' => $event->participation_limit
+                    'participationLimit' => $event->participation_limit,
+                    'rating' => round($event->ratings->pluck('rating')->avg(), 1)
                 ];
             });
 
@@ -97,7 +98,8 @@ class EventController extends Controller
                 'date' => $dbEvent->date,
                 'imagePath' => url('/') . Storage::url($dbEvent->image_path),
                 'category' => $dbEvent->category,
-                'participationLimit' => $dbEvent->participation_limit
+                'participationLimit' => $dbEvent->participation_limit,
+                'rating' => round($event->ratings->pluck('rating')->avg(), 1)
             ];
 
             return response()->json(['data' => $data]);

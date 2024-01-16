@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,5 +37,8 @@ Route::prefix('unreal-union/v1')->group(function () {
         // EVENTS
         Route::post('/events', [EventController::class, 'createEvent']);
         Route::get('/events/{eventId}', [EventController::class, 'getEvent']);
+
+        // RATINGS
+        Route::post('/events/rating', [RatingController::class, 'rateEvent']);
     });
 });
