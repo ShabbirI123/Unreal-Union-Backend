@@ -38,6 +38,7 @@ Route::prefix('unreal-union/v1')->group(function () {
 
         // EVENTS
         Route::post('/events', [EventController::class, 'createEvent']);
+        Route::post('/events/edit', [EventController::class, 'updateEvent']);
         Route::get('/users/events/{userId}', [EventController::class, 'getSelfCreatedEvents']);
 
         // RATINGS

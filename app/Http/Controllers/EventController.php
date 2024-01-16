@@ -58,6 +58,59 @@ class EventController extends Controller
         }
     }
 
+    public function updateEvent(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'eventId' => ['required', 'numeric'],
+            'name' => ['required', 'string'],
+            'description' => ['required', 'string'],
+            'location' => ['required', 'string'],
+            'date' => ['required', 'date'],
+            'image' => ['required'],
+            'category' => ['required', 'string'],
+            'participationLimit' => ['required', 'numeric'],
+            'creatorUserId' => ['required', 'numeric'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([$validator->errors()], 400);
+        }
+
+        $validated = $validator->safe()->all();
+
+        $dbEvent = Event::where('creator_user_id', $validated['creatorUserId'])
+            ->where('event_id', $validated['eventId'])
+            ->first();
+
+        if ($dbEvent) {
+            $dbEvent->name = $validated['name'];
+            $dbEvent->description = $validated['description'];
+            $dbEvent->location = $validated['location'];
+            $dbEvent->date = Carbon::parse($validated['date']);
+
+            if (gettype($validated['image']) == "string") {
+                $dbEvent->image_path = $validated['image'];
+            } else {
+                $imagePath = $request->file('image')->store('public/images');
+                $dbEvent->image_path = $imagePath;
+            }
+
+            $dbEvent->category = $validated['category'];
+            $dbEvent->participation_limit = $validated['participationLimit'];
+
+            try {
+                $dbEvent->save();
+            } catch (Exception $exception) {
+                return response()->json(['error' => $exception], 500);
+            }
+
+            return response()->json(['data' => 'Event updated']);
+        } else {
+            return response()->json(['error' => 'Either event was not found or you are not the creator of this event!'], 404);
+        }
+
+    }
+
     /**
      * Get all events of which the name matches with the searchString.
      * If no searchString is provided, all events will be returned
