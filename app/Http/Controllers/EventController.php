@@ -68,6 +68,12 @@ class EventController extends Controller
         return $this->fetchEventList($dbEvent);
     }
 
+    public function getEventListByCategory(string $searchString): JsonResponse
+    {
+        $dbEvent = Event::where('category', $searchString)->get();
+        return $this->fetchEventList($dbEvent);
+    }
+
     public function getEvent(int $eventId): JsonResponse
     {
         $dbEvent = Event::where('event_id', $eventId)->first();
