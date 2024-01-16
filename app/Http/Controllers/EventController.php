@@ -99,7 +99,7 @@ class EventController extends Controller
                 'imagePath' => url('/') . Storage::url($dbEvent->image_path),
                 'category' => $dbEvent->category,
                 'participationLimit' => $dbEvent->participation_limit,
-                'rating' => round($event->ratings->pluck('rating')->avg(), 1)
+                'rating' => round($dbEvent->ratings->pluck('rating')->avg(), 1)
             ];
 
             return response()->json(['data' => $data]);
