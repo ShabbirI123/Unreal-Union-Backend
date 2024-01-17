@@ -88,9 +88,7 @@ class EventController extends Controller
             $dbEvent->location = $validated['location'];
             $dbEvent->date = Carbon::parse($validated['date']);
 
-            if (gettype($validated['image']) == "string") {
-                $dbEvent->image_path = $validated['image'];
-            } else {
+            if (gettype($validated['image']) == "object") {
                 $imagePath = $request->file('image')->store('public/images');
                 $dbEvent->image_path = $imagePath;
             }
